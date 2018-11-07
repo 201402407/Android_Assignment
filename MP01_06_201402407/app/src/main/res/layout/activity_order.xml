@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:text="주문"
+        android:textSize="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <CheckBox
+            android:id="@+id/PizzaBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="피자" />
+
+        <Button
+            android:layout_marginLeft="10dp"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/PizzaPlusBtn"
+            android:onClick="onclicked"
+            android:enabled="false"
+            android:text="+"
+            />
+
+        <Button
+            android:layout_marginLeft="5dp"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/PizzaMinusBtn"
+            android:onClick="onclicked"
+            android:enabled="false"
+            android:text="-"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <CheckBox
+            android:id="@+id/SpaghettiBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="스파게티" />
+
+        <Button
+            android:layout_marginLeft="10dp"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/SpaghettiPlusBtn"
+            android:onClick="onclicked"
+            android:enabled="false"
+            android:text="+"
+            />
+
+        <Button
+            android:layout_marginLeft="5dp"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/SpaghettiMinusBtn"
+            android:onClick="onclicked"
+            android:enabled="false"
+            android:text="-"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="피자 = "
+            android:textSize="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textSize="20dp"
+            android:text="0"
+            android:id="@+id/PizzaCount"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="스파게티 = "
+            android:textSize="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textSize="20dp"
+            android:text="0"
+            android:id="@+id/SpaghettiCount"/>
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/OkBtn"
+        android:layout_marginTop="20dp"
+        android:text="확인"/>
+</LinearLayout>
