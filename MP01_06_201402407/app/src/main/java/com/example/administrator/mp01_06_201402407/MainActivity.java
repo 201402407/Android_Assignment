@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 if(pizzaselect == 2)
                     intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.mrpizza.co.kr/index"));
                 if(pizzaselect == 3)
-                    intent = new Intent(Intent.ACTION_DIAL, Uri.parse("https://www.pizzahut.co.kr"));
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.pizzahut.co.kr"));
                 break;
         }
         if(intent != null) {
