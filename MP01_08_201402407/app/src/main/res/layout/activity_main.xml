@@ -6,19 +6,37 @@
 
     <ProgressBar android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="100dp"
+        android:minWidth="30dp"
         android:minHeight="10dp"
-        android:maxWidth="100dp"
+        android:maxWidth="30dp"
         android:maxHeight="10dp"
-        android:progressDrawable="@drawable/custom_progressbar_red"
-        android:id="@+id/progress_bar"
+        android:progressDrawable="@drawable/custom_progressbar"
+        android:id="@+id/progress_fuelBar"
         android:layout_marginTop="80dp"
         android:layout_marginBottom="480dp"
-
-        android:progressBackgroundTint="@android:color/black"
-        android:progressTint="@android:color/holo_red_dark"
         android:progressTintMode="multiply"
-        android:padding ="20dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        style="?android:attr/progressBarStyleHorizontal">
+    </ProgressBar>
+
+    <ProgressBar android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="50dp"
+        android:minHeight="10dp"
+        android:maxWidth="50dp"
+        android:maxHeight="10dp"
+        android:progressDrawable="@drawable/custom_progressbar"
+        android:id="@+id/progress_speedBar"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="510dp"
+        android:layout_marginLeft="100dp"
+        android:progressTintMode="multiply"
+        android:paddingLeft="70dp"
+        android:paddingRight="100dp"
+        android:paddingTop="10dp"
         style="?android:attr/progressBarStyleHorizontal">
     </ProgressBar>
 

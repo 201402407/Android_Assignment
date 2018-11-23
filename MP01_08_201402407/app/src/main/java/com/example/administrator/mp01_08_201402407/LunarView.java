@@ -268,7 +268,10 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
         int x_count = 0;
         boolean isChange = false;
         boolean isDown = false;
-        ProgressBar progressBar;
+        boolean isFuel = true;
+        int fuel = 100;
+        ProgressBar speedProgressBar;
+        ProgressBar fuelProgressBar;
 
         // 우주선 내려오는거 등 전체적인 그림
         @RequiresApi(api = Build.VERSION_CODES.O)
@@ -283,28 +286,24 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             // 밑으로 내려오는 증가값
             spaceshipDrawableImage = getRotateDrawable(spaceshipBitmapImage, angle);
             // 아무 키도 누르지 않을 경우 자동으로 속도 증가.
-            if((!isChange) && (y_count < 200)) {
+            if((!isChange) && (y_count < 120)) {
                 y_count++;
             }
             x = x + x_count;
-            y = y + (y_count / 20); // 속도
+            y = y + (y_count / 14); // 속도
             spaceshipDrawableImage.setBounds(x, y , x + 197, y + 236); // 애니메이션. 첫, 두 번째 : x, y 좌표 변하는값
             if( x > mCanvasWidth ) x = 0;
             if( y > mCanvasHeight ) y = 0;
             spaceshipDrawableImage.draw(canvas);
 
             // 속도 ProgressBar
-            progressBar.setMax(200);
-            progressBar.setProgress(y_count);
-            Drawable draw;
-            if(y_count >= 120) {
-                draw = res.getDrawable(R.drawable.custom_progressbar_green);
-            }
-            else {
-                draw = res.getDrawable(R.drawable.custom_progressbar_red);
-            }
-            progressBar.setProgressDrawable(draw);
-            progressBar.draw(canvas);
+            //progressBar.setMax(200);
+            //progressBar.setProgress(y_count);
+            //progressBar.setSecondaryProgress(200);
+            new Speed().execute(y_count);
+            new Fuel().execute(fuel);
+            speedProgressBar.draw(canvas);
+            fuelProgressBar.draw(canvas);
 
             isChange = false; // 함수 끝나는 순간 누른 것이 끝난 것으로 간주.
             isDown = false;
@@ -337,17 +336,44 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         private class Speed extends AsyncTask<Integer, Integer, Integer> {
-
             @Override
             protected void onPreExecute() {
-
             }
-
             @Override
             protected Integer doInBackground(Integer... value) {
+                if(y_count <= 80) {
+                    publishProgress(0);
+                }
+                else {
+                    publishProgress(1);
+                }
                 return null;
             }
-
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                if(values[0] == 0) {
+                    //    Log.d(TAG, "0 : " + y_count);
+                    speedProgressBar.setProgress(y_count);
+                    speedProgressBar.setSecondaryProgress(0);
+                    speedProgressBar.setMax(120);
+                }
+                if(values[0] == 1) {
+                    //    Log.d(TAG, "1 : " + y_count);
+                    speedProgressBar.setSecondaryProgress(y_count);
+                }
+            }
+        }
+        private class Fuel extends AsyncTask<Integer, Integer, Integer> {
+            @Override
+            protected void onPreExecute() {
+            }
+            @Override
+            protected Integer doInBackground(Integer... value) {
+                Log.d(TAG, "fuel : " + fuel);
+                speedProgressBar.setProgress(fuel);
+                speedProgressBar.setMax(100);
+                return null;
+            }
         }
     }
 
@@ -357,38 +383,44 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (KeyCode) {
                 case KeyEvent.KEYCODE_DPAD_LEFT:
-                    Log.d(TAG, "왼쪽");
+                //    Log.d(TAG, "왼쪽");
                     thread.angle = thread.angle + 2;
                     if(thread.angle % 6 == 0)
                         thread.x_count++;
                     thread.isChange = true;
                     return true;
                 case KeyEvent.KEYCODE_DPAD_RIGHT:
-                    Log.d(TAG, "오른쪽");
+                    //Log.d(TAG, "오른쪽");
                     thread.angle = thread.angle - 2;
                     if(thread.angle % 6 == 0)
                         thread.x_count--;
                     thread.isChange = true;
                     return true;
                 case KeyEvent.KEYCODE_DPAD_DOWN:
-                    Log.d(TAG, "아래쪽");
+                    //Log.d(TAG, "아래쪽");
                     thread.isChange = true;
-                    if(thread.y_count >= 200) {
-                        thread.y_count = 200;
+                    if(thread.y_count >= 120) {
+                        thread.y_count = 120;
                         return true;
                     }
                     thread.y_count = thread.y_count + 2;
                     return true;
                 case KeyEvent.KEYCODE_DPAD_UP:
-                    Log.d(TAG, "위쪽");
-                    thread.isChange = true;
-                    thread.isDown = true;
-                    if(thread.y_count <= 10) {
-                        thread.y_count = 10;
+                    //Log.d(TAG, "위쪽");
+                    if(thread.isFuel) {
+                        thread.isChange = true;
+                        thread.isDown = true;
+                        thread.fuel--;
+                        if(thread.fuel <= 0) // 연료 없으면 부스트 X
+                            thread.isFuel = false;
+                        if (thread.y_count <= 10) { // 최소 속도 유지
+                            thread.y_count = 10;
+                            return true;
+                        }
+                        thread.y_count = thread.y_count - 2; // 부스트 감속
                         return true;
                     }
-                    thread.y_count--;
-                    return true;
+                    return false;
             }
         }
         return false;

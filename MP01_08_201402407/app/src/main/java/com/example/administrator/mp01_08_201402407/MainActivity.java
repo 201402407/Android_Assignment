@@ -13,7 +13,8 @@ public class MainActivity extends AppCompatActivity {
     // 실제 화면 뷰
     private LunarView mLunarView;
     static final String TAG = "test";
-    private ProgressBar mainProgressBar;
+    private ProgressBar speedProgressBar;
+    private ProgressBar fuelProgressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -25,8 +26,10 @@ public class MainActivity extends AppCompatActivity {
         mainUIThread = mLunarView.getThread();
         Log.d(TAG, "# getThread 완료");
 
-        mainProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        mainUIThread.progressBar = mainProgressBar;
+        speedProgressBar = (ProgressBar) findViewById(R.id.progress_speedBar);
+        fuelProgressBar = (ProgressBar) findViewById(R.id.progress_speedBar);
+        mainUIThread.speedProgressBar = speedProgressBar;
+        mainUIThread.fuelProgressBar = fuelProgressBar;
         Log.d(TAG, "# progressbar 전송 완료");
     //    new CounterTask().execute(0);
     }
