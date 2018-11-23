@@ -26,20 +26,11 @@ public class MainActivity extends AppCompatActivity {
         mainUIThread = mLunarView.getThread();
         Log.d(TAG, "# getThread 완료");
 
+        // 그대로 id를 가져오면 그 위치에 사용가능함
         speedProgressBar = (ProgressBar) findViewById(R.id.progress_speedBar);
-        fuelProgressBar = (ProgressBar) findViewById(R.id.progress_speedBar);
+        fuelProgressBar = (ProgressBar) findViewById(R.id.progress_fuelBar);
         mainUIThread.speedProgressBar = speedProgressBar;
         mainUIThread.fuelProgressBar = fuelProgressBar;
         Log.d(TAG, "# progressbar 전송 완료");
-    //    new CounterTask().execute(0);
     }
-
-    /*
-    private class CounterTask extends AsyncTask<Integer, Integer, Integer> {
-        @Override
-        protected Integer doInBackground(Integer... integers) {
-            return null;
-        }
-    }
-    */
 }

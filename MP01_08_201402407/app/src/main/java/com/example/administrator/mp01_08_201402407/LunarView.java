@@ -16,11 +16,16 @@
 
 package com.example.administrator.mp01_08_201402407;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -28,6 +33,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -300,11 +307,11 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             //progressBar.setMax(200);
             //progressBar.setProgress(y_count);
             //progressBar.setSecondaryProgress(200);
-            new Speed().execute(y_count);
-            new Fuel().execute(fuel);
+
             speedProgressBar.draw(canvas);
             fuelProgressBar.draw(canvas);
-
+            new Speed().execute(y_count);
+            new Fuel().execute(fuel);
             isChange = false; // 함수 끝나는 순간 누른 것이 끝난 것으로 간주.
             isDown = false;
         }
@@ -341,7 +348,7 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             }
             @Override
             protected Integer doInBackground(Integer... value) {
-                if(y_count <= 80) {
+                if(y_count <= 60) {
                     publishProgress(0);
                 }
                 else {
@@ -370,8 +377,8 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             @Override
             protected Integer doInBackground(Integer... value) {
                 Log.d(TAG, "fuel : " + fuel);
-                speedProgressBar.setProgress(fuel);
-                speedProgressBar.setMax(100);
+                fuelProgressBar.setProgress(fuel);
+                fuelProgressBar.setMax(100);
                 return null;
             }
         }
