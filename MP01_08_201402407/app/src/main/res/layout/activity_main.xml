@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <com.example.administrator.mp01_08_201402407.LunarView
+        android:id="@+id/lunar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ProgressBar android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minWidth="300dp"
+        android:minHeight="300dp"
+        android:maxWidth="350dp"
+        android:maxHeight="330dp"
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleHorizontal">
+    </ProgressBar>
+
+</FrameLayout>
