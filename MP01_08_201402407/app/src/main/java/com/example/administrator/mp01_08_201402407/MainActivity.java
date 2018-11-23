@@ -25,9 +25,9 @@ public class MainActivity extends AppCompatActivity {
         mainUIThread = mLunarView.getThread();
         Log.d(TAG, "# getThread 완료");
 
-
         mainProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mainUIThread.progressBar = mainProgressBar;
+        Log.d(TAG, "# progressbar 전송 완료");
     //    new CounterTask().execute(0);
     }
 

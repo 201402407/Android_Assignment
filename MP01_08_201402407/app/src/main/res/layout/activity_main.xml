@@ -4,19 +4,27 @@
     android:layout_height="match_parent"
     >
 
+    <ProgressBar android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="100dp"
+        android:minHeight="10dp"
+        android:maxWidth="100dp"
+        android:maxHeight="10dp"
+        android:progressDrawable="@drawable/custom_progressbar_red"
+        android:id="@+id/progress_bar"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="480dp"
+
+        android:progressBackgroundTint="@android:color/black"
+        android:progressTint="@android:color/holo_red_dark"
+        android:progressTintMode="multiply"
+        android:padding ="20dp"
+        style="?android:attr/progressBarStyleHorizontal">
+    </ProgressBar>
+
     <com.example.administrator.mp01_08_201402407.LunarView
         android:id="@+id/lunar"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <ProgressBar android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minWidth="300dp"
-        android:minHeight="300dp"
-        android:maxWidth="350dp"
-        android:maxHeight="330dp"
-        android:id="@+id/progress_bar"
-        style="?android:attr/progressBarStyleHorizontal">
-    </ProgressBar>
 
 </FrameLayout>

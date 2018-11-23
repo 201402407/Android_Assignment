@@ -16,36 +16,25 @@
 
 package com.example.administrator.mp01_08_201402407;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
-import android.text.Editable;
-import android.text.method.KeyListener;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.administrator.mp01_08_201402407.R;
 
 
 /**
@@ -294,19 +283,29 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             // 밑으로 내려오는 증가값
             spaceshipDrawableImage = getRotateDrawable(spaceshipBitmapImage, angle);
             // 아무 키도 누르지 않을 경우 자동으로 속도 증가.
-            if((!isChange) && (y_count < 120)) {
+            if((!isChange) && (y_count < 200)) {
                 y_count++;
             }
             x = x + x_count;
-            y = y + (y_count / 16); // 속도
+            y = y + (y_count / 20); // 속도
             spaceshipDrawableImage.setBounds(x, y , x + 197, y + 236); // 애니메이션. 첫, 두 번째 : x, y 좌표 변하는값
             if( x > mCanvasWidth ) x = 0;
             if( y > mCanvasHeight ) y = 0;
             spaceshipDrawableImage.draw(canvas);
 
-            //ProgressBar progressBar = setFuelProgressBar();
+            // 속도 ProgressBar
+            progressBar.setMax(200);
+            progressBar.setProgress(y_count);
+            Drawable draw;
+            if(y_count >= 120) {
+                draw = res.getDrawable(R.drawable.custom_progressbar_green);
+            }
+            else {
+                draw = res.getDrawable(R.drawable.custom_progressbar_red);
+            }
+            progressBar.setProgressDrawable(draw);
+            progressBar.draw(canvas);
 
-            //progressBar.draw(canvas);
             isChange = false; // 함수 끝나는 순간 누른 것이 끝난 것으로 간주.
             isDown = false;
         }
@@ -336,6 +335,20 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             };
             return drawable;
         }
+
+        private class Speed extends AsyncTask<Integer, Integer, Integer> {
+
+            @Override
+            protected void onPreExecute() {
+
+            }
+
+            @Override
+            protected Integer doInBackground(Integer... value) {
+                return null;
+            }
+
+        }
     }
 
     @Override
@@ -360,8 +373,8 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
                 case KeyEvent.KEYCODE_DPAD_DOWN:
                     Log.d(TAG, "아래쪽");
                     thread.isChange = true;
-                    if(thread.y_count >= 120) {
-                        thread.y_count = 120;
+                    if(thread.y_count >= 200) {
+                        thread.y_count = 200;
                         return true;
                     }
                     thread.y_count = thread.y_count + 2;
