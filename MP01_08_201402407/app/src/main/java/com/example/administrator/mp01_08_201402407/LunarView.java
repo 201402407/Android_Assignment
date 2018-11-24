@@ -25,6 +25,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -42,6 +44,9 @@ import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import java.util.Random;
 
 
 /**
@@ -129,6 +134,15 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             } catch (InterruptedException e) {
             }
         }
+    }
+
+    enum gameResult {
+        GAME_WIN,
+        GAME_LOSE,
+        GAME_PAUSE,
+        GAME_RESUME,
+        GAME_ING,
+        GAME_START
     }
 
     class LunarThread extends Thread {
@@ -232,6 +246,7 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
                     }
                 }
             }
+
         }
 
         /**
@@ -247,44 +262,65 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             return map;
         }
 
-        /**
-         * Used to signal the thread whether it should be running or not.
-         * Passing true allows the thread to run; passing false will shut it
-         * down if it's already running. Calling start() after this was most
-         * recently called with false will result in an immediate shutdown.
-         *
-         * @param b true to run, false to shut down
-         */
         public void setRunning(boolean b) {
             Log.d(TAG, "# setRunning");
             mRun = b;
         }
 
-        /**
-         * Resumes from a pause.
-         */
         public void unpause() {
             // Move the real time clock up to now
             synchronized (mSurfaceHolder) {
             }
         }
+
         int x = 0;
         int y = 0;
         int angle = 0;
+        int score = 0;
         int y_count = 0;
         int x_count = 0;
+        int fuel = 100;
+
         boolean isChange = false;
         boolean isDown = false;
         boolean isFuel = true;
-        int fuel = 100;
+        boolean isFinishLine = false;
+
         ProgressBar speedProgressBar;
         ProgressBar fuelProgressBar;
+
+        TextView gameNoticeText;
+        Random random = new Random();
+        int startX = 0;
+        int stopX = 0;
+
+        // 초기 세팅. 시작 단계라는 뜻.
+        gameResult game_result = gameResult.GAME_START;
 
         // 우주선 내려오는거 등 전체적인 그림
         @RequiresApi(api = Build.VERSION_CODES.O)
         private void draw(Canvas canvas) {
-            //Log.d(TAG, "# doDraw");
+            //Log.d(TAG, "# doDraw : " +mCanvasWidth);
             canvas.drawBitmap(mBackgroundImage, 0, 0, null); // 백그라운드 이미지
+
+            //Log.d(TAG, "here");
+            // 결승선 그리기
+            Paint finish_paint = new Paint();
+            finish_paint.setStrokeWidth(12f);
+            finish_paint.setStyle(Paint.Style.FILL);
+            finish_paint.setColor(Color.RED);
+
+            if(game_result == gameResult.GAME_START) {
+                // 1 ~ mCanvasWidth / 3까지의 랜덤 수.
+                startX = random.nextInt(mCanvasWidth / 3) + 1;
+                Log.d(TAG, " start : " + startX);
+                // mCanvasWidth /2 ~ mCanvasWidth까지 랜덤 수.
+                stopX = random.nextInt(mCanvasWidth - (mCanvasWidth / 2) + 1) + (mCanvasWidth / 2);
+                Log.d(TAG, " stop : " + stopX);
+                game_result = gameResult.GAME_ING;
+            }
+
+            canvas.drawLine(startX, mCanvasHeight, stopX, mCanvasHeight, finish_paint);
 
             if(!isDown)
                 spaceshipBitmapImage = BitmapFactory.decodeResource(res, R.drawable.lander_plain); // 초기값 Bitmap 객체 세팅
@@ -299,21 +335,62 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             x = x + x_count;
             y = y + (y_count / 14); // 속도
             spaceshipDrawableImage.setBounds(x, y , x + 197, y + 236); // 애니메이션. 첫, 두 번째 : x, y 좌표 변하는값
-            if( x > mCanvasWidth ) x = 0;
-            if( y > mCanvasHeight ) y = 0;
-            spaceshipDrawableImage.draw(canvas);
+            if( x > mCanvasWidth )  {
+                x = 0;
+            }
 
-            // 속도 ProgressBar
-            //progressBar.setMax(200);
-            //progressBar.setProgress(y_count);
-            //progressBar.setSecondaryProgress(200);
-
+            // ProgressBar 그리기
             speedProgressBar.draw(canvas);
             fuelProgressBar.draw(canvas);
+            // ProgressBar 실행시키기 위한 AsyncTask 작업
             new Speed().execute(y_count);
             new Fuel().execute(fuel);
+
             isChange = false; // 함수 끝나는 순간 누른 것이 끝난 것으로 간주.
             isDown = false;
+
+            // 게임이 끝나는 기본 전제 조건
+            if(y >= (mCanvasHeight - 220)  && game_result == gameResult.GAME_ING) {
+                // 도착 선에 닿지 않은 경우
+                if(x < startX || x > stopX) {
+                    Log.d(TAG, "선 안밟아서 패배!");
+                    game_result = gameResult.GAME_LOSE;
+                    gameNoticeText.setText();
+                }
+                // 기울어져 있는 경우 ( 20도 이상 좌우 중 하나라도 기울면 실패 )
+                else if(angle > 30 || angle < -30) {
+                    Log.d(TAG, "기울어져서 패배!");
+                    game_result = gameResult.GAME_LOSE;
+                    gameNoticeText.setText();
+                }
+                // 안전속도 이상으로 낙하한 경우
+                else if(y_count > 60) {
+                    Log.d(TAG, "속도 빨라서 패배!");
+                    game_result = gameResult.GAME_LOSE;
+                    gameNoticeText.setText();
+                }
+                else {
+                    game_result = gameResult.GAME_WIN;
+                    gameNoticeText.setText();
+                    score++;
+                }
+
+                // 패배조건 만족하면
+                if(game_result == gameResult.GAME_LOSE) {
+                    spaceshipBitmapImage = BitmapFactory.decodeResource(res, R.drawable.lander_crashed);
+                    spaceshipDrawableImage = getRotateDrawable(spaceshipBitmapImage, angle);
+                    spaceshipDrawableImage.setBounds(x, y , x + 197, y + 236);
+                    mRun = false;
+                    gameNoticeText.draw(canvas);
+                    Log.d(TAG, "패배");
+                }
+                if(game_result == gameResult.GAME_WIN) {
+                    mRun = false;
+                    gameNoticeText.draw(canvas);
+                    Log.d(TAG, "성공");
+                }
+            }
+            spaceshipDrawableImage.draw(canvas);
         }
 
         /*
@@ -329,6 +406,7 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             return progressBar;
         }
         */
+
         private Drawable getRotateDrawable(final Bitmap b, final float angle) {
             final BitmapDrawable drawable = new BitmapDrawable(getResources(), b) {
                 @Override
@@ -376,7 +454,7 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             }
             @Override
             protected Integer doInBackground(Integer... value) {
-                Log.d(TAG, "fuel : " + fuel);
+              //  Log.d(TAG, "fuel : " + fuel);
                 fuelProgressBar.setProgress(fuel);
                 fuelProgressBar.setMax(100);
                 return null;
