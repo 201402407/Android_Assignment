@@ -16,7 +16,6 @@ public class MainActivity extends AppCompatActivity {
     static final String TAG = "test";
     private ProgressBar speedProgressBar;
     private ProgressBar fuelProgressBar;
-    private TextView gameNoticeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
         // 그대로 id를 가져오면 그 위치에 사용가능함
         speedProgressBar = (ProgressBar) findViewById(R.id.progress_speedBar);
         fuelProgressBar = (ProgressBar) findViewById(R.id.progress_fuelBar);
-        gameNoticeText = (TextView) findViewById(R.id.gameNotice);
 
         mainUIThread.speedProgressBar = speedProgressBar;
         mainUIThread.fuelProgressBar = fuelProgressBar;

@@ -203,9 +203,6 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
         int startX = 0;
         int stopX = 0;
 
-        // 초기 세팅. 시작 단계라는 뜻.
-        //gameResult game_result = gameResult.GAME_START;
-
         // 우주선 내려오는거 등 전체적인 그림
         @RequiresApi(api = Build.VERSION_CODES.O)
         private void draw(Canvas canvas) {
@@ -234,9 +231,9 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
 
             canvas.drawLine(startX, mCanvasHeight, stopX, mCanvasHeight, finish_paint);
 
-            if(!isDown)
+            if(!isDown) // 부스트 사용 X
                 spaceshipBitmapImage = BitmapFactory.decodeResource(res, R.drawable.lander_plain); // 초기값 Bitmap 객체 세팅
-            if(isDown)
+            if(isDown) // 부스트 사용
                 spaceshipBitmapImage = BitmapFactory.decodeResource(res, R.drawable.lander_firing); // 초기값 Bitmap 객체 세팅
             // 밑으로 내려오는 증가값
             spaceshipDrawableImage = getRotateDrawable(spaceshipBitmapImage, angle);
@@ -284,8 +281,9 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
                 }
                 else {
                     game_result = gameResult.GAME_WIN;
-                    printGameNoticeText(canvas, "Success _" + score + " in a row _" + "Press Up To Play");
                     score++;
+                    printGameNoticeText(canvas, "Success _" + score + " in a row _" + "Press Up To Play");
+
                 }
 
                 // 패배조건 만족하면
@@ -425,6 +423,7 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
         return super.onTouchEvent(event);
     }
 
+    // 키보드 방향키 누를 시
     @Override
     public boolean onKeyDown(int KeyCode, KeyEvent event) {
         super.onKeyDown(KeyCode, event);
@@ -432,16 +431,16 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             switch (KeyCode) {
                 case KeyEvent.KEYCODE_DPAD_LEFT:
                 //    Log.d(TAG, "왼쪽");
-                    thread.angle = thread.angle + 2;
+                    thread.angle = thread.angle - 2;
                     if(thread.angle % 6 == 0)
-                        thread.x_count++;
+                        thread.x_count--;
                     thread.isChange = true;
                     return true;
                 case KeyEvent.KEYCODE_DPAD_RIGHT:
                     //Log.d(TAG, "오른쪽");
-                    thread.angle = thread.angle - 2;
+                    thread.angle = thread.angle + 2;
                     if(thread.angle % 6 == 0)
-                        thread.x_count--;
+                        thread.x_count++;
                     thread.isChange = true;
                     return true;
                 case KeyEvent.KEYCODE_DPAD_DOWN:
