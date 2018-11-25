@@ -1,20 +1,5 @@
-/*
- * Copyright (C) 2007 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.example.administrator.mp01_08_201402407;
+// 201402407 이해원
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -41,6 +26,7 @@ import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.ProgressBar;
@@ -48,34 +34,31 @@ import android.widget.TextView;
 
 import java.util.Random;
 
-
-/**
- * View that draws, takes keystrokes, etc. for a simple LunarLander game.
- *
- * Has a mode which RUNNING, PAUSED, etc. Has a x, y, dx, dy, ... capturing the
- * current ship physics. All x/y etc. are measured with (0,0) at the lower left.
- * updatePhysics() advances the physics based on realtime. draw() renders the
- * ship, and does an invalidate() to prompt another draw() as soon as possible
- * by the system.
- */
 class LunarView extends SurfaceView implements SurfaceHolder.Callback {
     public Handler keyHandler;
     static final String TAG = "test";
-
-    /** Handle to the application context, used to e.g. fetch Drawables. */
     private Context mContext;
-
-    /** The thread that actually draws the animation */
     private LunarThread thread;
+    private SurfaceHolder mSurfaceHolder;
+
+    // 초기 세팅. 시작 단계라는 뜻.
+    gameResult game_result;
+    int score = 0; // 승리횟수
+    enum gameResult {
+        GAME_WIN,
+        GAME_LOSE,
+        GAME_PAUSE,
+        GAME_RESUME,
+        GAME_ING,
+        GAME_START
+    }
 
     public LunarView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        // register our interest in hearing about changes to our surface
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
 
-        // create thread only; it's started in surfaceCreated()
         thread = new LunarThread(holder, context, new Handler() {
             @Override
             public void handleMessage(Message m) {
@@ -86,45 +69,26 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true); // make sure we get key events
     }
 
-    /**
-     * Fetches the animation thread corresponding to this LunarView.
-     *
-     * @return the animation thread
-     */
     public LunarThread getThread() {
         Log.d(TAG, "# getThread");
         return thread;
     }
 
-
-    /* Callback invoked when the surface dimensions change. */
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
                                int height) {
         Log.d(TAG, "# surfaceChanged");
         thread.setSurfaceSize(width, height);
     }
 
-    /*
-     * Callback invoked when the Surface has been created and is ready to be
-     * used.
-     */
     public void surfaceCreated(SurfaceHolder holder) {
         Log.d(TAG, "# surfaceCreated");
-        // start the thread here so that we don't busy-wait in run()
-        // waiting for the surface to be created
+        game_result = gameResult.GAME_START;
         thread.setRunning(true);
         thread.start();
     }
 
-    /*
-     * Callback invoked when the Surface has been destroyed and must no longer
-     * be touched. WARNING: after this method returns, the Surface/Canvas must
-     * never be touched again!
-     */
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.d(TAG, "# surfaceDestroyed");
-        // we have to tell thread to shut down & wait for it to finish, or else
-        // it might touch the Surface after we return and explode
         boolean retry = true;
         thread.setRunning(false);
         while (retry) {
@@ -136,43 +100,19 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    enum gameResult {
-        GAME_WIN,
-        GAME_LOSE,
-        GAME_PAUSE,
-        GAME_RESUME,
-        GAME_ING,
-        GAME_START
-    }
-
     class LunarThread extends Thread {
-        /** The drawable to use as the background of the animation canvas */
-        private Bitmap mBackgroundImage;
-        /**
-         * Current height of the surface/canvas.
-         *
-         * @see #setSurfaceSize
-         */
-        private int mCanvasHeight = 1;
 
-        /**
-         * Current width of the surface/canvas.
-         *
-         * @see #setSurfaceSize
-         */
+        private Bitmap mBackgroundImage;
+        private int mCanvasHeight = 1;
         private int mCanvasWidth = 1;
         private Drawable spaceshipDrawableImage;
         private Bitmap spaceshipBitmapImage;
 
         // 현재 쓰레드가 Running인지 아닌지 스위치
         private boolean mRun = false;
-
-        /** Handle to the surface manager object we interact with */
-        private SurfaceHolder mSurfaceHolder;
         private Resources res;
         public LunarThread(SurfaceHolder surfaceHolder, Context context,
                            Handler handler) {
-            // get handles to some important objects
             mSurfaceHolder = surfaceHolder;
             keyHandler = handler;
             mContext = context;
@@ -183,13 +123,10 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
                     R.drawable.earthrise);
         }
 
-        /* Callback invoked when the surface dimensions change. */
         public void setSurfaceSize(int width, int height) {
             setFocusableInTouchMode(true);
             Log.d(TAG, "# setSurfaceSize");
-            // synchronized to make sure these all change atomically
             synchronized (mSurfaceHolder) {
-                // don't forget to resize the background image
                 mCanvasWidth = width;
                 mCanvasHeight = height;
                 mBackgroundImage = mBackgroundImage.createScaledBitmap(
@@ -198,30 +135,15 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
 
-        /**
-         * Starts the game, setting parameters for the current difficulty.
-         */
         public void doStart() {
             Log.d(TAG, "# doStart");
             synchronized (mSurfaceHolder) {
             }
         }
-
-        /**
-         * Pauses the physics update & animation.
-         */
         public void pause() {
             synchronized (mSurfaceHolder) {
             }
         }
-
-        /**
-         * Restores game state from the indicated Bundle. Typically called when
-         * the Activity is being restored after having been previously
-         * destroyed.
-         *
-         * @param savedState Bundle containing the game state
-         */
         public synchronized void restoreState(Bundle savedState) {
             synchronized (mSurfaceHolder) {
             }
@@ -230,31 +152,21 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void run() {
+            Canvas c = null;
             while (mRun) {
-                Canvas c = null;
                 try {
                     c = mSurfaceHolder.lockCanvas(null);
                     synchronized (mSurfaceHolder) {
                         draw(c);
                     }
                 } finally {
-                    // do this in a finally so that if an exception is thrown
-                    // during the above, we don't leave the Surface in an
-                    // inconsistent state
                     if (c != null) {
                         mSurfaceHolder.unlockCanvasAndPost(c);
                     }
                 }
             }
-
         }
 
-        /**
-         * Dump game state to the provided Bundle. Typically called when the
-         * Activity is being suspended.
-         *
-         * @return Bundle with this view's state
-         */
         public Bundle saveState(Bundle map) {
             Log.d(TAG, "# saveState");
             synchronized (mSurfaceHolder) {
@@ -276,31 +188,28 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
         int x = 0;
         int y = 0;
         int angle = 0;
-        int score = 0;
-        int y_count = 0;
+        int y_count = 10;
         int x_count = 0;
         int fuel = 100;
 
         boolean isChange = false;
         boolean isDown = false;
         boolean isFuel = true;
-        boolean isFinishLine = false;
 
         ProgressBar speedProgressBar;
         ProgressBar fuelProgressBar;
 
-        TextView gameNoticeText;
         Random random = new Random();
         int startX = 0;
         int stopX = 0;
 
         // 초기 세팅. 시작 단계라는 뜻.
-        gameResult game_result = gameResult.GAME_START;
+        //gameResult game_result = gameResult.GAME_START;
 
         // 우주선 내려오는거 등 전체적인 그림
         @RequiresApi(api = Build.VERSION_CODES.O)
         private void draw(Canvas canvas) {
-            //Log.d(TAG, "# doDraw : " +mCanvasWidth);
+            Log.d(TAG, "# doDraw : " +game_result);
             canvas.drawBitmap(mBackgroundImage, 0, 0, null); // 백그라운드 이미지
 
             //Log.d(TAG, "here");
@@ -317,7 +226,10 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
                 // mCanvasWidth /2 ~ mCanvasWidth까지 랜덤 수.
                 stopX = random.nextInt(mCanvasWidth - (mCanvasWidth / 2) + 1) + (mCanvasWidth / 2);
                 Log.d(TAG, " stop : " + stopX);
-                game_result = gameResult.GAME_ING;
+                printGameNoticeText(canvas, "Lunar Lander \n" + "Press Up To Play");
+                setRunning(false);
+
+                return;
             }
 
             canvas.drawLine(startX, mCanvasHeight, stopX, mCanvasHeight, finish_paint);
@@ -332,8 +244,9 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             if((!isChange) && (y_count < 120)) {
                 y_count++;
             }
+            Log.d(TAG, "y : " + y);
             x = x + x_count;
-            y = y + (y_count / 14); // 속도
+            y = y + (y_count / 10) + 1; // 속도
             spaceshipDrawableImage.setBounds(x, y , x + 197, y + 236); // 애니메이션. 첫, 두 번째 : x, y 좌표 변하는값
             if( x > mCanvasWidth )  {
                 x = 0;
@@ -355,23 +268,23 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
                 if(x < startX || x > stopX) {
                     Log.d(TAG, "선 안밟아서 패배!");
                     game_result = gameResult.GAME_LOSE;
-                    gameNoticeText.setText();
+                    printGameNoticeText(canvas, "No Finish Line _" + "Game Over _" + "Press Up To Play");
                 }
                 // 기울어져 있는 경우 ( 20도 이상 좌우 중 하나라도 기울면 실패 )
                 else if(angle > 30 || angle < -30) {
                     Log.d(TAG, "기울어져서 패배!");
                     game_result = gameResult.GAME_LOSE;
-                    gameNoticeText.setText();
+                    printGameNoticeText(canvas, "Too Lean _" + "Game Over _" + "Press Up To Play");
                 }
                 // 안전속도 이상으로 낙하한 경우
                 else if(y_count > 60) {
                     Log.d(TAG, "속도 빨라서 패배!");
                     game_result = gameResult.GAME_LOSE;
-                    gameNoticeText.setText();
+                    printGameNoticeText(canvas, "Too Fast _" + "Game Over _" + "Press Up To Play");
                 }
                 else {
                     game_result = gameResult.GAME_WIN;
-                    gameNoticeText.setText();
+                    printGameNoticeText(canvas, "Success _" + score + " in a row _" + "Press Up To Play");
                     score++;
                 }
 
@@ -380,13 +293,11 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
                     spaceshipBitmapImage = BitmapFactory.decodeResource(res, R.drawable.lander_crashed);
                     spaceshipDrawableImage = getRotateDrawable(spaceshipBitmapImage, angle);
                     spaceshipDrawableImage.setBounds(x, y , x + 197, y + 236);
-                    mRun = false;
-                    gameNoticeText.draw(canvas);
+                    setRunning(false);
                     Log.d(TAG, "패배");
                 }
                 if(game_result == gameResult.GAME_WIN) {
-                    mRun = false;
-                    gameNoticeText.draw(canvas);
+                    setRunning(false);
                     Log.d(TAG, "성공");
                 }
             }
@@ -437,17 +348,16 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
             @Override
             protected void onProgressUpdate(Integer... values) {
                 if(values[0] == 0) {
-                    //    Log.d(TAG, "0 : " + y_count);
                     speedProgressBar.setProgress(y_count);
                     speedProgressBar.setSecondaryProgress(0);
                     speedProgressBar.setMax(120);
                 }
                 if(values[0] == 1) {
-                    //    Log.d(TAG, "1 : " + y_count);
                     speedProgressBar.setSecondaryProgress(y_count);
                 }
             }
         }
+
         private class Fuel extends AsyncTask<Integer, Integer, Integer> {
             @Override
             protected void onPreExecute() {
@@ -460,6 +370,59 @@ class LunarView extends SurfaceView implements SurfaceHolder.Callback {
                 return null;
             }
         }
+
+        private void printGameNoticeText(Canvas canvas, String string) {
+
+            Paint paint = new Paint();
+            paint.setColor(Color.GRAY);
+            paint.setTextSize(50);
+            paint.setTextAlign(Paint.Align.CENTER);
+            String[] temp = string.split("_");
+            for(int i = 0; i < temp.length; i++) {
+                canvas.drawText("" + temp[i], mCanvasWidth / 2, (mCanvasHeight / 2) + (50 * i), paint);
+            }
+        }
+    }
+
+    public void threadInit() {
+        thread.x = 465;
+        thread.y = 0;
+        thread.angle = 0;
+        thread.x_count = 0;
+        thread.y_count = 10;
+        thread.fuel = 100;
+
+        thread.isChange = false;
+        thread.isDown = false;
+        thread.isFuel = true;
+    }
+    //화면 터치 이벤트
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:    //화면을 터치했을때
+                Log.d(TAG , "Touch");
+                Log.d(TAG, "" + game_result);
+                if(game_result == gameResult.GAME_START) {
+                    game_result = gameResult.GAME_ING;
+                    thread.setRunning(true);
+                    threadInit();
+                    thread.start();
+                }
+                if(game_result == gameResult.GAME_WIN ||
+                        game_result == gameResult.GAME_LOSE) {
+                    game_result = gameResult.GAME_START;
+                    thread.setRunning(true);
+                    thread.start();
+                }
+                break;
+            case MotionEvent.ACTION_UP:    //화면을 터치했다 땠을때
+                break;
+            case MotionEvent.ACTION_MOVE:    //화면을 터치하고 이동할때
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 
     @Override

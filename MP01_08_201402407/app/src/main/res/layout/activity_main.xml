@@ -46,6 +46,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/gameNotice"
         android:layout_gravity="center"
+        android:textColor="@android:color/darker_gray"
         android:gravity="center"/>
 
     <com.example.administrator.mp01_08_201402407.LunarView

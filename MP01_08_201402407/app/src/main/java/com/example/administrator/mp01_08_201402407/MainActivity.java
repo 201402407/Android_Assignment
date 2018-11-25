@@ -8,7 +8,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    // 실제 화면 쓰레든
+    // 실제 화면 쓰레드
     private LunarView.LunarThread mainUIThread;
 
     // 실제 화면 뷰
@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
         mainUIThread.speedProgressBar = speedProgressBar;
         mainUIThread.fuelProgressBar = fuelProgressBar;
-        mainUIThread.gameNoticeText = gameNoticeText;
         Log.d(TAG, "# progressbar 전송 완료");
     }
 }
