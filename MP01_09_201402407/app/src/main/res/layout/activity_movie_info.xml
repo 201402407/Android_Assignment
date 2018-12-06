@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MovieInfoActivity"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="영화이름"
+            android:textSize="20dp"
+            android:padding="10dp"
+            />
+        <EditText
+            android:id="@+id/movieName"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="제작연도"
+            android:textSize="20dp"
+            android:padding="10dp"
+            />
+        <EditText
+            android:id="@+id/movieYear"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="감독이름"
+            android:textSize="20dp"
+            android:padding="10dp"
+            />
+        <EditText
+            android:id="@+id/directorName"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="평점"
+            android:textSize="20dp"
+            android:padding="10dp"
+            />
+        <EditText
+            android:layout_marginLeft="37dp"
+            android:id="@+id/movieScore"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="개봉국가"
+            android:textSize="20dp"
+            android:padding="10dp"
+            />
+        <EditText
+            android:id="@+id/movieCountry"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp">
+
+        <Button
+            android:id="@+id/savebtn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="SAVE"
+            android:layout_weight="1"
+            />
+
+        <Button
+            android:id="@+id/updatebtn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="UPDATE"
+            android:layout_weight="1"
+            />
+
+        <Button
+            android:id="@+id/deletebtn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="DELETE"
+            android:layout_weight="1"
+            />
+    </LinearLayout>
+
+</LinearLayout>
